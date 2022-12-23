@@ -5,7 +5,7 @@ import styled from 'styled-components/native';
 
 import CalendarMain from './src/screens/calendar/calendar';
 import AgendaMain from './src/screens/agenda/agenda';
-
+import WeeklyCalendar from './src/screens/example/example';
 
 const App = () => {
 
@@ -14,7 +14,8 @@ const App = () => {
   return (
     <>
       {/* <AgendaMain /> */}
-      <CalendarMain />
+      <WeeklyCalendar />
+      {/* <CalendarMain /> */}
     </>
 
   )

@@ -127,6 +127,17 @@ const CalendarMain = () => {
               '2022-12-24': [],
               '2022-12-25': [{ name: 'item 3 - any js object' }, { name: 'any js object' }]
             }}
+            renderEmptyDate={() => {
+              return (
+                <View style={styles.viewStyle}>
+                  <Text >No services on this date</Text>
+                </View>
+              );
+            }}
+            renderDay={(day, item) => {
+              return (<View><Text>Text</Text></View>);
+            }
+            }
           />
         )}
     </>
