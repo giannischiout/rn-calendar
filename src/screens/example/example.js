@@ -13,58 +13,30 @@ const days = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυ�
 
 const WeeklyCalendar = () => {
 
-
-  // const [today, setToday] = useState();
-  // console.log(moment().format('l'))
-
-  // const fullDateToday = moment().format('l') //23-12-2022
-  // const day = moment().format('DD');
-
-
-  // const todayMoment = moment().format('l')
-  // console.log(todayMoment)
-  // console.log(moment().add(1, 'days').format('l'))
-
-  // console.log(moment().add(2, 'days').format('l'))
-  // console.log(moment().add(3, 'days').format('l'))
-  // console.log(moment().add(4, 'days').format('l'))
-  // console.log(moment().add(5, 'days').format('l'))
-  // console.log(moment().add(6, 'days').format('l'))
-  // console.log(moment().add(7, 'days').format('l'))
-  // console.log(moment().add(8, 'days').format('l'))
-  // console.log(moment().add(9, 'days').format('l'))
-  // console.log(moment().add(10, 'days').format('l'))
-
-  // const day2 = moment().add(1, 'days').format('l')
-
-
-  // const enDay = moment().format('dddd');
   const [date, setDate] = useState()
 
-  const [startDay, setStartDate] = useState()
-  const [endDay, setEndDay] = useState()
-
+ 
+  
 
   const calendar = [];
   const today = moment();
+  console.log('-----------------------1')
+  console.log(today)
+  console.log('----------------------- Start Week')
+  
   let startWeek = today.clone().startOf('week');
   console.log(startWeek)
+   startWeek.clone().format('DD')
+  
   let endWeek = today.clone().endOf('week');
+  console.log('----------------------- End Week')
+  console.log(endWeek)
 
-
-
-  let monday = startWeek.clone();
-
-
-
-  console.log('monday')
-  console.log(monday)
-  let sunday = endWeek.add(1, 'day')
-  console.log(monday)
-  console.log(sunday)
-  console.log('-----------------------')
+useEffect(() => {
+  setDate(startWeek)
   console.log(date)
-  console.log(endDay)
+}, [])
+
 
 
 
@@ -74,6 +46,7 @@ const WeeklyCalendar = () => {
     //   calendar.push(date.add(1, 'day').clone().format('DD'));
     // }
     for (i = 0; i < 7; i++) {
+      console.log(date.clone().format('DD'))
       calendar.push(date.add(1, 'day').clone().format('DD'));
     }
 
@@ -91,8 +64,7 @@ const WeeklyCalendar = () => {
     let start = newDate.clone().startOf('week')
 
     let endDay = newDate.clone().endOf('week')
-    setStartDate(start)
-    setEndDay(endDay)
+   
   }
 
   // console.log(calendar)
@@ -157,3 +129,7 @@ const DaysContainer = styled.View`
   /* border: 1px solid black; */
 `
 export default WeeklyCalendar;
+
+//!haha ti malakies kanw haha! in reality awesemoeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee 
+//!fere mou kafe kai ase ta lemon pie!
+//!
