@@ -27,14 +27,15 @@ const AgendaMain = () => {
         '2022-12-24': [{ name: 'item 3 - any js object' }],
         '2022-12-25': [{ name: 'item 4 - any js object' }],
         '2022-12-26': [{ name: 'item 5 - any js object' }],
+        '2022-12-27': [{ name: 'item 5 - any js object' }],
       }}
         renderItem={(item, firstItemInDay) => {
           renderItem(item, firstItemInDay)
         }}
-      // Specify how each date should be rendered. day can be undefined if the item is not first in that day
-      // renderDay={(day, item) => {
-      //   return <View><Text>${day}</Text></View>;
-      // }}
+        // Specify how each date should be rendered. day can be undefined if the item is not first in that day
+        renderDay={(day, item) => {
+          return <View><Text>${day}</Text></View>;
+        }}
 
       />
       {/* < AgendaSchedule /> */}
