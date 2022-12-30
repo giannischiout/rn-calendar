@@ -1,13 +1,22 @@
-import { setDate } from "date-fns";
-import he from "date-fns/esm/locale/he/index.js";
-import id from "date-fns/esm/locale/id/index.js";
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import styled from "styled-components/native";
 
 const days = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ']
 const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+
+const data = [
+    {
+        date: '2022-12-30',
+        name: 'Giannis',
+        time: '21:00'
+    },
+    {
+        date: '2022-12-30',
+        name: 'Giannis',
+        time: '20:00',
+    }
+]
 
 
 export const CreateWeekView = () => {
@@ -15,76 +24,64 @@ export const CreateWeekView = () => {
     const [today, setToday] = useState();
     const [displayMonth, setDisplayMonth] = useState();
     const [monday, setMonday] = useState();
-    const [sunday, setSunday] = useState();
     const [week, setWeek] = useState();
 
     // console.log('MONDAY:' + monday)
     // console.log('SUNDAY: ' + sunday)
     // console.log('WEEK: ' + week)
     // console.log('Today: ' + today)
+    // Get the current date
+    const transformData = (data) => {
+        let newData = new Date(data).getTime()
+        return newData;
+    }
+    transformData(data[0]);
+
+
     useEffect(() => {
         handleStartEndWeek();
-    }, [today])
+    }, [])
 
 
     const handleStartEndWeek = () => {
-        const date = new Date();
-        console.log(date)
-        // setDate(date);
-        setToday(date.getDate())
-        let m = month[date.getMonth()];
+        const currentDate = new Date();
+        // console.log(currentDate)
+        // Get the current day of the week (0 = Sunday, 1 = Monday, etc.)
+        const currentDayOfWeek = currentDate.getDay();
+        // Calculate the number of days until the next Sunday
+        const daysUntilNextSunday = 7 - currentDayOfWeek;
+        // Calculate the number of days until the last Monday
+        const daysUntilLastMonday = currentDayOfWeek - 1;
+        // Calculate the next Sunday by adding the number of days until the next Sunday to the current date
+        const nextSunday = new Date(currentDate.getTime() + (daysUntilNextSunday * 24 * 60 * 60 * 1000));
+        // Calculate the last Monday by subtracting the number of days until the last Monday from the current date
+        const lastMonday = new Date(currentDate.getTime() - (daysUntilLastMonday * 24 * 60 * 60 * 1000));
+
+
+        let m = month[currentDate.getMonth()];
         setDisplayMonth(m)
-        // setMonth(m);
-        const day = date.getDay();
-        const diffMonday = date.getDate() - day + (day === 0 ? -6 : 1);
-        const diffSunday = date.getDate() - day + 7;
-
-
-        if (diffSunday > 31) {
-            let newDif = diffSunday - 31
-            // console.log(newDif)
-            let sunday = new Date(date.setDate(newDif))
-            setSunday(sunday)
-
-        }
-
-        let sunday = new Date(date.setDate(diffSunday))
-        let monday = new Date(date.setDate(diffMonday));
-        console.log(monday)
-
-        setSunday(sunday)
-        setMonday(monday)
-        handleCalendar(monday);
+        setToday(currentDate)
+        setMonday(lastMonday)
+        handleCalendar(lastMonday);
     }
 
 
 
     const handleNextWeek = () => {
-        // console.log('press')
-        // console.log('=============================')
-        // console.log(monday)
-        let m = new Date(monday);
-        // console.log('----------' + m)
-        //Change current month after 4 clicks when monrth changes
-        let nextMonth = month[m.getMonth()];
-        // console.log(nextMonth)
-
-        m.setDate(m.getDate() + 7)
-        setMonday(m)
+        const nextMonday = new Date(monday.getTime() + (7 * 24 * 60 * 60 * 1000));
+        let nextMonth = month[nextMonday.getMonth()];
+        handleCalendar(nextMonday)
+        setMonday(nextMonday)
         setDisplayMonth(nextMonth)
-        handleCalendar(m)
     }
 
 
     const handlePreviousWeek = () => {
-        // console.log('press')
-        // console.log('=============================')
-        // console.log(monday)
-        let m = new Date(monday);
-        // console.log('----------' + m)
-        m.setDate(m.getDate() - 7)
-        setMonday(m)
-        handleCalendar(m)
+        const prevMonday = new Date(monday.getTime() - (7 * 24 * 60 * 60 * 1000));
+        setMonday(prevMonday)
+        let nextMonth = month[prevMonday.getMonth()];
+        setDisplayMonth(nextMonth)
+        handleCalendar(prevMonday)
 
     }
 
@@ -93,31 +90,12 @@ export const CreateWeekView = () => {
         for (i = 0; i < 7; i++) {
             let nextday = new Date(monday);
             nextday.setDate(nextday.getDate() + i)
-            // console.log(nd)
-            calendar.push(nextday.getDate())
+            calendar.push(nextday)
             setWeek(calendar)
-
         }
-
-
     }
 
-    // return (
-    //     <View style={styles.container}>
-    //         <View style={styles.weekRow}>
-    //             <TouchableOpacity style={styles.arrowIcons} onPress={handlePreviousWeek} >
-    //                 <Text> {'<'} </Text>
-    //             </TouchableOpacity>
-    //             <View style={styles.daysWrapper}>
 
-    //             </View>
-    //             <TouchableOpacity style={styles.arrowIcons} onPress={handleNextWeek} >
-    //                 <Text> {'>'} </Text>
-    //             </TouchableOpacity>
-    //         </View>
-
-    //     </View>
-    // )
 
     return (
         <>
@@ -140,11 +118,11 @@ export const CreateWeekView = () => {
                     </View>
                     <View style={styles.daysContainer}>
                         {week && week.map((day, index) => {
-                            // console.log(day)
+                            // console.log(day.getTime())
                             return (
-                                <View style={[styles.daysNum, day == today ? styles.currentDay : null]} key={day}>
-                                    <Text >{day}</Text>
-                                </View>
+                                <TouchableOpacity style={[styles.daysNum, day.getTime() == today.getTime() ? styles.currentDay : null]} key={day}>
+                                    <Text style={day.getTime() == today.getTime() ? styles.currentDayText : null} >{day.getDate()}</Text>
+                                </TouchableOpacity>
                             )
                         })}
                     </View >
@@ -152,6 +130,35 @@ export const CreateWeekView = () => {
                 <TouchableOpacity style={styles.arrowView} onPress={handleNextWeek}>
                     <Text style={styles.arrowFont}> {'>'} </Text>
                 </TouchableOpacity>
+            </View>
+            <View style={{ flex: 1, backgroundColor: 'red', justifyContent: 'center' }}>
+                {week && week.map((day, index) => {
+                    console.log(day.getTime())
+                    return (
+                        <>
+                            <View >
+                                <View style={[styles.daysNum]}>
+                                    <Text>{day.getDate()}</Text>
+                                </View>
+                                {data.map((data, index) => {
+                                    return (
+                                        <View>
+                                            {data.date === day}
+                                            {console.log('sefsefeff')}
+                                            {console.log(new Date(day))}
+                                            {console.log(data.date, day)}
+                                            {new Date(data.date) === day && (
+
+                                                <Text>{data.name}</Text>
+                                            )}
+                                        </View>
+                                    )
+                                })}
+
+                            </View>
+                        </>
+                    )
+                })}
             </View>
         </>
     )
@@ -168,8 +175,10 @@ const styles = StyleSheet.create({
         width: '100%',
         // backgroundColor: 'orange',
         minHeight: 80,
-        flexDirection: 'row'
-
+        flexDirection: 'row',
+        borderBottomWidth: 0.2,
+        borderBottomColor: '#e0dfde',
+        paddingBottom: 10,
 
     },
     arrowView: {
@@ -181,7 +190,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     arrowFont: {
-        fontSize: 20,
+        fontSize: 15,
     },
     days: {
         flex: 1,
@@ -220,7 +229,10 @@ const styles = StyleSheet.create({
     },
     currentDay: {
         borderRadius: 30,
-        backgroundColor: 'blue'
+        backgroundColor: '#1ecbe1'
+    },
+    currentDayText: {
+        color: 'white'
     },
     daysNum: {
         // backgroundColor: 'orange',
