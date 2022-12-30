@@ -1,4 +1,5 @@
 import { setDate } from "date-fns";
+import he from "date-fns/esm/locale/he/index.js";
 import id from "date-fns/esm/locale/id/index.js";
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
@@ -12,23 +13,27 @@ const month = ["January", "February", "March", "April", "May", "June", "July", "
 export const CreateWeekView = () => {
 
     const [today, setToday] = useState();
-    const [month, setMonth] = useState();
+    const [displayMonth, setDisplayMonth] = useState();
     const [monday, setMonday] = useState();
     const [sunday, setSunday] = useState();
     const [week, setWeek] = useState();
 
-    console.log('MONDAY:' + monday)
-    console.log('SUNDAY: ' + sunday)
-    console.log('WEEK: ' + week)
+    // console.log('MONDAY:' + monday)
+    // console.log('SUNDAY: ' + sunday)
+    // console.log('WEEK: ' + week)
+    // console.log('Today: ' + today)
     useEffect(() => {
         handleStartEndWeek();
-    }, [])
+    }, [today])
 
 
     const handleStartEndWeek = () => {
         const date = new Date();
+        console.log(date)
         // setDate(date);
-        // let m = month[date.getMonth()];
+        setToday(date.getDate())
+        let m = month[date.getMonth()];
+        setDisplayMonth(m)
         // setMonth(m);
         const day = date.getDay();
         const diffMonday = date.getDate() - day + (day === 0 ? -6 : 1);
@@ -40,10 +45,13 @@ export const CreateWeekView = () => {
             // console.log(newDif)
             let sunday = new Date(date.setDate(newDif))
             setSunday(sunday)
+
         }
 
         let sunday = new Date(date.setDate(diffSunday))
         let monday = new Date(date.setDate(diffMonday));
+        console.log(monday)
+
         setSunday(sunday)
         setMonday(monday)
         handleCalendar(monday);
@@ -52,18 +60,32 @@ export const CreateWeekView = () => {
 
 
     const handleNextWeek = () => {
-        console.log('press')
+        // console.log('press')
+        // console.log('=============================')
+        // console.log(monday)
         let m = new Date(monday);
+        // console.log('----------' + m)
+        //Change current month after 4 clicks when monrth changes
+        let nextMonth = month[m.getMonth()];
+        // console.log(nextMonth)
+
         m.setDate(m.getDate() + 7)
         setMonday(m)
+        setDisplayMonth(nextMonth)
         handleCalendar(m)
     }
+
+
     const handlePreviousWeek = () => {
-        console.log('press')
+        // console.log('press')
+        // console.log('=============================')
+        // console.log(monday)
         let m = new Date(monday);
+        // console.log('----------' + m)
         m.setDate(m.getDate() - 7)
         setMonday(m)
         handleCalendar(m)
+
     }
 
     const handleCalendar = (monday) => {
@@ -80,78 +102,133 @@ export const CreateWeekView = () => {
 
     }
 
-    return (
-        <View style={{ borderBottomWidth: 1, borderBottomColor: '#d3d1d3' }}>
+    // return (
+    //     <View style={styles.container}>
+    //         <View style={styles.weekRow}>
+    //             <TouchableOpacity style={styles.arrowIcons} onPress={handlePreviousWeek} >
+    //                 <Text> {'<'} </Text>
+    //             </TouchableOpacity>
+    //             <View style={styles.daysWrapper}>
 
-            <View style={styles.weekRow}>
-                <View></View>
-                <TouchableOpacity style={styles.arrowIcons} onPress={handlePreviousWeek} >
-                    <Text> {'<'} </Text>
+    //             </View>
+    //             <TouchableOpacity style={styles.arrowIcons} onPress={handleNextWeek} >
+    //                 <Text> {'>'} </Text>
+    //             </TouchableOpacity>
+    //         </View>
+
+    //     </View>
+    // )
+
+    return (
+        <>
+            <View style={styles.monthView}>
+                <Text>
+                    {displayMonth}
+                </Text>
+            </View>
+            <View style={styles.primView}>
+                <TouchableOpacity style={styles.arrowView} onPress={handlePreviousWeek}>
+                    <Text style={styles.arrowFont}> {'<'} </Text>
                 </TouchableOpacity>
-                <View>
+                <View style={styles.days}>
                     <View style={styles.daysContainer}>
                         {days.map((day, index) => {
                             return (
-                                <Text key={day}>{day}</Text>
+                                <Text style={[styles.dayTitle]} key={day}>{day}</Text>
                             )
                         })}
                     </View>
-                    <DaysContainer>
+                    <View style={styles.daysContainer}>
                         {week && week.map((day, index) => {
                             // console.log(day)
                             return (
-                                <Text key={day}>{day.toString()}</Text>
+                                <View style={[styles.daysNum, day == today ? styles.currentDay : null]} key={day}>
+                                    <Text >{day}</Text>
+                                </View>
                             )
                         })}
-                    </DaysContainer>
+                    </View >
                 </View>
-                <TouchableOpacity style={styles.arrowIcons} onPress={handleNextWeek} >
-                    <Text> {'>'} </Text>
+                <TouchableOpacity style={styles.arrowView} onPress={handleNextWeek}>
+                    <Text style={styles.arrowFont}> {'>'} </Text>
                 </TouchableOpacity>
             </View>
-
-        </View>
+        </>
     )
 
 }
 
 
 const styles = StyleSheet.create({
-    arrowIcons: {
-        width: 20,
-        height: 20,
+    monthView: {
+        alignItems: 'center',
+        padding: 10,
+    },
+    primView: {
+        width: '100%',
+        // backgroundColor: 'orange',
+        minHeight: 80,
+        flexDirection: 'row'
+
+
+    },
+    arrowView: {
+        width: '10%',
+        minWidth: 30,
+        height: 40,
+        // backgroundColor: 'red',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    arrowFont: {
+        fontSize: 20,
+    },
+    days: {
+        flex: 1,
+    },
+    dayTitle: {
+        color: '#bcbeba',
+    },
+
+    container: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#d3d1d3',
+        minHeight: 100,
+
     },
     weekRow: {
         width: '100%',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        backgroundColor: 'red',
         flexDirection: 'row',
-        padding: 10,
     },
+    arrowIcons: {
+        width: '20%',
+        height: 30,
+    },
+    daysWrapper: {
+        width: '80%',
+        backgroundColor: 'red'
+    },
+
     daysContainer: {
         width: '100%',
         flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        height: 40,
+    },
+    currentDay: {
+        borderRadius: 30,
+        backgroundColor: 'blue'
+    },
+    daysNum: {
+        // backgroundColor: 'orange',
+        height: 28,
+        width: 28,
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 
 });
 
-
-const WeekRow = styled.View`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-evenly;
-  align-items: center;
-  padding: 15px;
-`
-const DaysContainer = styled.View`
-  padding: 5px;
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-  /* background-color: red; */
-  /* border: 1px solid black; */
-`
